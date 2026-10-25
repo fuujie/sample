@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Line Up Audit Email Notification</title>
+
+<!--
+  =====================================================================
+  PANDUAN CUSTOMISASI (hapus komentar ini sebelum dipakai produksi)
+  =====================================================================
+
+  WARNA (cari lalu replace-all di file ini)
+  Primary
+    #000DC5  = utama (header bar, tombol, angka skor, teks judul)
+    #656FFF  = aksen sekunder (progress bar, link)
+    #8B91ED  = teks pendukung / label
+    #C8CBFF  = border, background tipis, track progress bar
+  Secondary
+    #DE5900  = teks status "Action Required"
+    #FF934A  = aksen callout
+    #FFB686  = (cadangan)
+    #FFDDC7  = background badge / callout oranye
+
+  BAGIAN YANG BIASANYA DIUBAH
+    1. LOGO          -> cari "LOGO"
+    2. GREETING      -> cari "GREETING"
+    3. SCORE/STATUS  -> cari "SUMMARY"
+    4. DETAIL ROWS   -> cari "DETAIL" (copy-paste satu <tr> untuk tambah baris)
+    5. CATATAN       -> cari "NOTES" (hapus blok jika tidak perlu)
+    6. TOMBOL        -> cari "CTA"
+    7. FOOTER        -> cari "FOOTER"
+
+  VARIAN BADGE STATUS (ganti isi badge di bagian SUMMARY)
+    Completed        : bgcolor #C8CBFF, teks #000DC5
+    Action Required  : bgcolor #FFDDC7, teks #DE5900
+    In Review        : bgcolor #FFFFFF, border #8B91ED, teks #656FFF
+
+  PROGRESS BAR SKOR
+    Ubah width="86%" (sel biru) dan width="14%" (sel track) agar totalnya 100%.
+
+  TIPS
+    - Gambar harus di-host di URL publik (https://...), bukan path lokal.
+    - Poppins hanya tampil di klien email yang mendukung web font
+      (Apple Mail, iOS Mail, Outlook Mac). Gmail/Outlook Windows otomatis
+      memakai fallback Arial.
+    - Placeholder seperti {{ ... }} contoh syntax; sesuaikan dengan sistem
+      pengirim kamu (n8n expression, Handlebars, dll).
+  =====================================================================
+-->
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; padding: 0; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+  table { border-collapse: collapse; mso-table-lspace: 0; mso-table-rspace: 0; }
+  img { border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; }
+  a { color: #656FFF; }
+  .font { font-family: 'Poppins', Arial, Helvetica, sans-serif; }
+
+  @media only screen and (max-width: 620px) {
+    .container { width: 100% !important; }
+    .px { padding-left: 20px !important; padding-right: 20px !important; }
+    .stack { display: block !important; width: 100% !important; }
+    .stack-gap { padding-bottom: 12px !important; }
+    .btn a { display: block !important; }
+  }
+</style>
+</head>
+
+<body style="margin:0; padding:0; background-color:#FFFFFF;">
+
+<!-- Preheader (teks preview di inbox) -->
+<div style="display:none; max-height:0; overflow:hidden; opacity:0; color:#FFFFFF; font-size:1px; line-height:1px;">
+  Your audit result is ready: score 86 / 100, action status updated.
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF">
+  <tr>
+    <td align="center" style="padding:32px 12px;">
+
+      <!-- CARD -->
+      <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF"
+             style="width:600px; max-width:600px; border:1px solid #C8CBFF; border-radius:8px;">
+
+        <!-- Top accent bar -->
+        <tr>
+          <td height="4" style="height:4px; line-height:4px; font-size:0; background-color:#000DC5; border-radius:8px 8px 0 0;">&nbsp;</td>
+        </tr>
+
+        <!-- LOGO -->
+        <tr>
+          <td class="px" style="padding:28px 40px 20px 40px;">
+            <img src="https://your-domain.com/assets/logo.png" alt="Company Name" width="140" style="width:140px; height:auto;">
+          </td>
+        </tr>
+
+        <!-- Divider -->
+        <tr>
+          <td class="px" style="padding:0 40px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr><td height="1" style="height:1px; line-height:1px; font-size:0; background-color:#C8CBFF;">&nbsp;</td></tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- GREETING -->
+        <tr>
+          <td class="px font" style="padding:28px 40px 8px 40px; font-family:'Poppins', Arial, Helvetica, sans-serif; color:#1F2140;">
+            <p style="margin:0 0 4px 0; font-size:12px; line-height:18px; font-weight:500; letter-spacing:0.6px; text-transform:uppercase; color:#8B91ED;">
+              Line Up Audit
+            </p>
+            <h1 style="margin:0 0 16px 0; font-size:22px; line-height:32px; font-weight:600; color:#000DC5;">
+              Audit Result Notification
+            </h1>
+            <p style="margin:0 0 12px 0; font-size:14px; line-height:24px; font-weight:400;">
+              Hi {{ recipient_name }},
+            </p>
+            <p style="margin:0; font-size:14px; line-height:24px; font-weight:400;">
+              The audit for your area has been completed. Below is the summary of the result
+              and the action status that needs your attention.
+            </p>
+          </td>
+        </tr>
+
+        <!-- SUMMARY: score + status -->
+        <tr>
+          <td class="px" style="padding:24px 40px 8px 40px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+
+                <!-- Score -->
+                <td class="stack stack-gap" width="50%" valign="top" style="padding-right:8px;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                         style="border:1px solid #C8CBFF; border-radius:8px;">
+                    <tr>
+                      <td class="font" style="padding:16px 18px; font-family:'Poppins', Arial, Helvetica, sans-serif;">
+                        <p style="margin:0 0 4px 0; font-size:12px; line-height:18px; color:#8B91ED; font-weight:500;">Result Score</p>
+                        <p style="margin:0 0 12px 0; font-size:36px; line-height:44px; font-weight:600; color:#000DC5;">
+                          86<span style="font-size:14px; font-weight:400; color:#8B91ED;"> / 100</span>
+                        </p>
+                        <!-- progress bar: width harus total 100% -->
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius:4px;">
+                          <tr>
+                            <td width="86%" height="6" bgcolor="#656FFF" style="height:6px; line-height:6px; font-size:0; border-radius:4px 0 0 4px;">&nbsp;</td>
+                            <td width="14%" height="6" bgcolor="#C8CBFF" style="height:6px; line-height:6px; font-size:0; border-radius:0 4px 4px 0;">&nbsp;</td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+
+                <!-- Action status -->
+                <td class="stack" width="50%" valign="top" style="padding-left:8px;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                         style="border:1px solid #C8CBFF; border-radius:8px;">
+                    <tr>
+                      <td class="font" style="padding:16px 18px; font-family:'Poppins', Arial, Helvetica, sans-serif;">
+                        <p style="margin:0 0 8px 0; font-size:12px; line-height:18px; color:#8B91ED; font-weight:500;">Action Status</p>
+                        <!-- Badge: ganti warna sesuai varian di panduan atas -->
+                        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                          <tr>
+                            <td bgcolor="#FFDDC7" style="padding:6px 14px; border-radius:20px; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; font-weight:600; color:#DE5900;">
+                              Action Required
+                            </td>
+                          </tr>
+                        </table>
+                        <p style="margin:12px 0 0 0; font-size:12px; line-height:18px; color:#1F2140;">
+                          Due {{ due_date }}
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- DETAIL -->
+        <tr>
+          <td class="px font" style="padding:16px 40px 8px 40px; font-family:'Poppins', Arial, Helvetica, sans-serif;">
+            <p style="margin:0 0 8px 0; font-size:14px; line-height:22px; font-weight:600; color:#1F2140;">Audit Details</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+
+              <tr>
+                <td width="38%" valign="top" style="padding:10px 0; border-top:1px solid #C8CBFF; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#8B91ED;">Audit Type</td>
+                <td valign="top" style="padding:10px 0; border-top:1px solid #C8CBFF; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#1F2140; font-weight:500;">5S Audit</td>
+              </tr>
+              <tr>
+                <td valign="top" style="padding:10px 0; border-top:1px solid #C8CBFF; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#8B91ED;">Audit ID</td>
+                <td valign="top" style="padding:10px 0; border-top:1px solid #C8CBFF; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#1F2140; font-weight:500;">AUD-2026-0142</td>
+              </tr>
+              <tr>
+                <td valign="top" style="padding:10px 0; border-top:1px solid #C8CBFF; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#8B91ED;">Area / Line</td>
+                <td valign="top" style="padding:10px 0; border-top:1px solid #C8CBFF; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#1F2140; font-weight:500;">Production Line 3</td>
+              </tr>
+              <tr>
+                <td valign="top" style="padding:10px 0; border-top:1px solid #C8CBFF; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#8B91ED;">Auditor</td>
+                <td valign="top" style="padding:10px 0; border-top:1px solid #C8CBFF; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#1F2140; font-weight:500;">Auditor Name</td>
+              </tr>
+              <tr>
+                <td valign="top" style="padding:10px 0; border-top:1px solid #C8CBFF; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#8B91ED;">Audit Date</td>
+                <td valign="top" style="padding:10px 0; border-top:1px solid #C8CBFF; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#1F2140; font-weight:500;">24 October 2026</td>
+              </tr>
+              <tr>
+                <td valign="top" style="padding:10px 0; border-top:1px solid #C8CBFF; border-bottom:1px solid #C8CBFF; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#8B91ED;">Total Findings</td>
+                <td valign="top" style="padding:10px 0; border-top:1px solid #C8CBFF; border-bottom:1px solid #C8CBFF; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#1F2140; font-weight:500;">3 items need follow-up</td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+
+        <!-- NOTES (opsional, hapus blok ini jika tidak dipakai) -->
+        <tr>
+          <td class="px" style="padding:16px 40px 8px 40px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td width="3" bgcolor="#FF934A" style="width:3px; font-size:0; line-height:0;">&nbsp;</td>
+                <td bgcolor="#FFDDC7" class="font" style="padding:12px 16px; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:13px; line-height:22px; color:#1F2140;">
+                  <strong style="font-weight:600; color:#DE5900;">Note from auditor</strong><br>
+                  Please complete the corrective action before the due date and update the status in the system.
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- CTA -->
+        <tr>
+          <td class="px btn" align="left" style="padding:24px 40px 8px 40px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td bgcolor="#000DC5" style="border-radius:6px;">
+                  <a href="https://your-domain.com/audit/AUD-2026-0142"
+                     style="display:inline-block; padding:12px 28px; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:14px; line-height:20px; font-weight:500; color:#FFFFFF; text-decoration:none; border-radius:6px;">
+                    View Audit Detail
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Closing -->
+        <tr>
+          <td class="px font" style="padding:24px 40px 32px 40px; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:14px; line-height:24px; color:#1F2140;">
+            <p style="margin:0 0 12px 0;">Thank you for your cooperation.</p>
+            <p style="margin:0;">
+              Best regards,<br>
+              <strong style="font-weight:600;">Line Up Audit Team</strong>
+            </p>
+          </td>
+        </tr>
+
+        <!-- FOOTER -->
+        <tr>
+          <td class="px font" bgcolor="#FFFFFF" style="padding:20px 40px 28px 40px; border-top:1px solid #C8CBFF; font-family:'Poppins', Arial, Helvetica, sans-serif; font-size:11px; line-height:18px; color:#8B91ED; border-radius:0 0 8px 8px;">
+            <p style="margin:0 0 6px 0;">
+              This is an automated notification from Line Up Audit. Please do not reply to this email.
+            </p>
+            <p style="margin:0 0 6px 0;">
+              Need help? Contact <a href="mailto:support@your-domain.com" style="color:#656FFF; text-decoration:underline;">support@your-domain.com</a>
+            </p>
+            <p style="margin:0;">
+              &copy; 2026 Company Name &middot; Company Address, City
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
